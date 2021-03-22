@@ -13,7 +13,7 @@ Dim GreatestPerDec As Double
 Dim GreatestVol As Double
 
     ' Loop over worksheets
-    For Each ws in ActiveWorkbook.Worksheets
+    For Each ws In ActiveWorkbook.Worksheets
 
         ' define initial values for variables
         SummaryTableIndex = 2
@@ -31,22 +31,22 @@ Dim GreatestVol As Double
         ws.Cells(1, 12).Value = "Tot. Volume"
 
         ' Bonus task table
-        ws.Cells(2,14).Value = "Greatest % Increase"
-        ws.Cells(3,14).Value = "Greatest % Decrease"
-        ws.Cells(4,14).Value = "Greatest Tot. Volume"
-        ws.Cells(1,15).Value = "Ticker"
-        ws.Cells(1,16).Value = "Value"
+        ws.Cells(2, 14).Value = "Greatest % Increase"
+        ws.Cells(3, 14).Value = "Greatest % Decrease"
+        ws.Cells(4, 14).Value = "Greatest Tot. Volume"
+        ws.Cells(1, 15).Value = "Ticker"
+        ws.Cells(1, 16).Value = "Value"
     
         ' Loop over rows
-        For i = 2 To ws.Cells(Rows.Count, 1).End(xlUp).Row
+        For I = 2 To ws.Cells(Rows.Count, 1).End(xlUp).Row
 
             'Conditional sentence
 
-            If (ws.Cells(i, 1).Value <> ws.Cells(i + 1, 1).Value) Then
+            If (ws.Cells(I, 1).Value <> ws.Cells(I + 1, 1).Value) Then
                 
-                TickerName = ws.Cells(i, 1).Value
-                FinalValue = ws.Cells(i, 6).Value
-                VolumeSum = VolumeSum + ws.Cells(i, 7).Value
+                TickerName = ws.Cells(I, 1).Value
+                FinalValue = ws.Cells(I, 6).Value
+                VolumeSum = VolumeSum + ws.Cells(I, 7).Value
                 
                 ' Assign to summary table
                 
@@ -55,16 +55,17 @@ Dim GreatestVol As Double
                 
                 If (FinalValue = 0 And InitialValue = 0) Then
                     ws.Cells(SummaryTableIndex, 11).Value = 0
-                    ws.Cells(SummaryTableIndex, 11).NumberFormat="0.00%"
-                    ws.Cells(SummaryTableIndex, 11).Interior.ColorIndex= 2
+                    ws.Cells(SummaryTableIndex, 11).NumberFormat = "0.00%"
+                    ws.Cells(SummaryTableIndex, 11).Interior.ColorIndex = 2
                 Else
                     ws.Cells(SummaryTableIndex, 11).Value = (FinalValue - InitialValue) / InitialValue
-                    ws.Cells(SummaryTableIndex, 11).NumberFormat="0.00%"
+                    ws.Cells(SummaryTableIndex, 11).NumberFormat = "0.00%"
                     
+                    'Color coding the cells
                     If ((FinalValue - InitialValue) / InitialValue > 0) Then
-                        ws.Cells(SummaryTableIndex, 11).Interior.ColorIndex= 4
-                    Else 
-                        ws.Cells(SummaryTableIndex, 11).Interior.ColorIndex= 3
+                        ws.Cells(SummaryTableIndex, 11).Interior.ColorIndex = 4
+                    Else
+                        ws.Cells(SummaryTableIndex, 11).Interior.ColorIndex = 3
                     End If
 
                 End If
@@ -76,34 +77,44 @@ Dim GreatestVol As Double
                 'Greatest % increase
                 If (ws.Cells(SummaryTableIndex, 11).Value > GreatestPerInc) Then
                     ws.Cells(2, 15).Value = ws.Cells(SummaryTableIndex, 9).Value ' greatest % increase ticker name
-                    ws.Cells(2, 16).Value = ws.Cells(SummaryTableIndex, 11).Value ' greatest % increase value 
-                    ws.Cells(2, 16).NumberFormat= "0.00%"
+                    ws.Cells(2, 16).Value = ws.Cells(SummaryTableIndex, 11).Value ' greatest % increase value
+                    ws.Cells(2, 16).NumberFormat = "0.00%"
                     GreatestPerInc = ws.Cells(SummaryTableIndex, 11).Value
                 End If
 
                 'Greatest % decrease
                 If (ws.Cells(SummaryTableIndex, 11).Value < GreatestPerDec) Then
                     ws.Cells(3, 15).Value = ws.Cells(SummaryTableIndex, 9).Value ' greatest % dec ticker name
-                    ws.Cells(3, 16).Value = ws.Cells(SummaryTableIndex, 11).Value ' greatest % dec value 
-                    ws.Cells(3, 16).NumberFormat= "0.00%"
+                    ws.Cells(3, 16).Value = ws.Cells(SummaryTableIndex, 11).Value ' greatest % dec value
+                    ws.Cells(3, 16).NumberFormat = "0.00%"
                     GreatestPerDec = ws.Cells(SummaryTableIndex, 11).Value
-                End If 
+                End If
 
                 'Greatest volume
                 If (ws.Cells(SummaryTableIndex, 12).Value > GreatestVol) Then
                     ws.Cells(4, 15).Value = ws.Cells(SummaryTableIndex, 9).Value ' greatest vol ticker name
-                    ws.Cells(4, 16).Value = ws.Cells(SummaryTableIndex, 12).Value ' greatest vol value 
+                    ws.Cells(4, 16).Value = ws.Cells(SummaryTableIndex, 12).Value ' greatest vol value
                     GreatestVol = ws.Cells(SummaryTableIndex, 12).Value
-                End If 
+                End If
                 
                 ' Rename initial value for next Ticker,  set new index & reset total
                 SummaryTableIndex = SummaryTableIndex + 1
-                InitialValue = ws.Cells(i+1, 3).Value
                 VolumeSum = 0
+
+                If (ws.Cells(I + 1, 3).Value = 0) Then
+                    For P = 1 To 365
+                        If (ws.Cells(I + P, 3).Value > 0) Then
+                            InitialValue = ws.Cells(I + P, 3).Value
+                            Exit For
+                        End If
+                    Next P
+                Else
+                    InitialValue = ws.Cells(I + 1, 3).Value
+                End If
 
             Else
 
-                VolumeSum = VolumeSum + ws.Cells(i, 7).Value
+                VolumeSum = VolumeSum + ws.Cells(I, 7).Value
                 
             End If
         
@@ -111,7 +122,6 @@ Dim GreatestVol As Double
     
     Next ws
     
-    MsgBox("Summary completed! :-D")
+    MsgBox ("Summary completed! :-D")
 
 End Sub
-
