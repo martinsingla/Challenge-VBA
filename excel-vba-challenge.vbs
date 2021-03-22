@@ -15,7 +15,7 @@ Dim VolumeSum As Double
         InitialValue = ws.Cells(2, 3).Value
         VolumeSum = 0
     
-        ' Configure table
+        ' Configure table col names
         ws.Cells(1, 9).Value = "Ticker"
         ws.Cells(1, 10).Value = "Yearly Absolute Change"
         ws.Cells(1, 11).Value = "Yearly % Change"
@@ -39,8 +39,18 @@ Dim VolumeSum As Double
                 
                 If (FinalValue = 0 And InitialValue = 0) Then
                     ws.Cells(SummaryTableIndex, 11).Value = 0
-                Else 
+                    ws.Cells(SummaryTableIndex, 11).NumberFormat="0.00%"
+                    ws.Cells(SummaryTableIndex, 11).Interior.ColorIndex= 2
+                Else
                     ws.Cells(SummaryTableIndex, 11).Value = (FinalValue - InitialValue) / InitialValue
+                    ws.Cells(SummaryTableIndex, 11).NumberFormat="0.00%"
+                    
+                    If ((FinalValue - InitialValue) / InitialValue > 0) Then
+                        ws.Cells(SummaryTableIndex, 11).Interior.ColorIndex= 4
+                    Else 
+                        ws.Cells(SummaryTableIndex, 11).Interior.ColorIndex= 3
+                    End If
+
                 End If
 
                 ws.Cells(SummaryTableIndex, 12).Value = VolumeSum
